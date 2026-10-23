@@ -1,0 +1,6 @@
+# application-dev.yml
+app:
+  name: Stock API
+logging:
+  level:
+    com.stockapp: WARN
