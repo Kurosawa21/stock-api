@@ -2,23 +2,30 @@ package com.stockapp.demo.model;
 
 import java.io.Serializable;
 import java.util.List;
-import org.springframework.data.jpa.repository.JpaRepository;
 import jakarta.persistence.*;
-import lombok.Data;
+import jakarta.persistence.Column;
 
-@Data
+//import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+//@Data //deprecated
+@NoArgsConstructor
 @Entity // This tells Hibernate to make a table out of this class
+@Getter
+@Setter
 @Table(name = "categorie")
 public class Categorie {//implements Serializable {
 
-
-    public Categorie (String name){
-        this.name = name;
-    }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, length = 50)
     private String name;
 
+    public Categorie (String name){
+        this.name = name;
+    }
 }

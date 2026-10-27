@@ -11,3 +11,4 @@ CREATE TABLE public.articles (
 	"name" varchar NULL,
 	CONSTRAINT articles_pk PRIMARY KEY (id)
 );
+

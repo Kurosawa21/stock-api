@@ -45,6 +45,14 @@ public class CategorieServiceImpl implements CategorieService{
     }
 
     @Override
+    public Categorie getByName(String name) {
+        Optional<Categorie> findByName = categorieRepository.findByName(name);
+        if(findByName.isPresent())
+            return findByName.get();
+        return null;
+    }
+
+    @Override
     public List<Categorie> getAllCategorie() {
         return categorieRepository.findAll();
     }

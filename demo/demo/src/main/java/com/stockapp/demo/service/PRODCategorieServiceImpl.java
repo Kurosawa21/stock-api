@@ -45,6 +45,11 @@ public class PRODCategorieServiceImpl implements CategorieService{
     }
 
     @Override
+    public Categorie getByName(String name) {
+        return categorieRepository.findByName(name).orElse(null);
+    }
+
+    @Override
     public List<Categorie> getAllCategorie() {
         System.out.println("getting categories from PROD");
         return categorieRepository.findAll();

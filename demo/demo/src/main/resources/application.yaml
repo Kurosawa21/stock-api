@@ -2,12 +2,17 @@ spring:
   application:
     name: demo
   datasource:
-    url: jdbc:postgresql://localhost:5433/stock
-    username: stock
-    password: stock
+    url: ${DB_URL:jdbc:postgresql://localhost:5433/stock}
+    username: ${DB_USER:stock}
+    password: ${DB_PASSWORD:stock}
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: update #validate //only use after tables created. and good for prod
+                #none :	ne touche à rien	production
+                #validate :	compare entités et tables, refuse de démarrer si elles ne correspondent pas	notre choix
+                #update :	modifie les tables pour les faire correspondre	à éviter (modifications imprévisibles)
+                #create , create-drop :	efface et recrée tout	tests jetables uniquement
+    show-sql: true
   profiles:
     active: dev
   debug: true

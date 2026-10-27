@@ -14,6 +14,8 @@ public interface CategorieService {
 
     public Categorie getById(Long id);
 
+    public Categorie getByName(String name);
+
     public List<Categorie> getAllCategorie();
 
     public String deleteById(Long id);
