@@ -25,7 +25,11 @@ public class Categorie {//implements Serializable {
     @Column(nullable = false, length = 50)
     private String name;
 
-    public Categorie (String name){
+    @Column(nullable = false, length = 11)
+    private Long prix;
+
+    public Categorie (String name, Long prix){
         this.name = name;
+        this.prix = prix;
     }
 }

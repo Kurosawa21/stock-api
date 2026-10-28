@@ -2,11 +2,14 @@ package com.stockapp.demo.controller;
 
 import com.stockapp.demo.dto.CategorieRequest;
 import com.stockapp.demo.dto.CategorieResponse;
+import com.stockapp.demo.dto.PageResponse;
 import com.stockapp.demo.service.CategorieService;
 import com.stockapp.demo.config.AppProperties;
 import com.stockapp.demo.model.Categorie;
+import com.stockapp.demo.repository.CategorieSpecifications;
 import com.stockapp.demo.exception.ResourceNotFoundException;
 import com.stockapp.demo.exception.DuplicateCategorieException;
+import com.stockapp.demo.exception.InvalidRequestException;
 
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -15,10 +18,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.math.BigDecimal;
 import java.net.URI;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -27,6 +32,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.domain.Sort;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import org.springframework.data.jpa.domain.Specification;
 
 @Tag(name = "Categorie", description = "Gestion des categorie de stock")
 @RestController
@@ -36,12 +48,45 @@ public class CategorieController {
     //private final Map<Long, Categorie> categories = new ConcurrentHashMap<>();
     private final AtomicLong sequence = new AtomicLong();
 
+    private static final Set<String> TRIS_AUTORISES = Set.of("id", "name");
+
     private final CategorieService categorieService;
     private final AppProperties properties;
     public CategorieController(CategorieService categorieService, AppProperties properties) {
 
         this.categorieService = categorieService;
         this.properties = properties;
+    }
+
+    @GetMapping("/all")
+    public PageResponse<CategorieResponse> lister( @RequestParam(required = false) String q,
+                                                   @RequestParam(required = false) BigDecimal prix,
+                                                   @PageableDefault(size = 2, sort = "name") Pageable pageable) {
+        for (Sort.Order ordre : pageable.getSort()) {
+            if (!TRIS_AUTORISES.contains(ordre.getProperty())) {
+                throw new InvalidRequestException("Tri non autorisé : " + ordre.getProperty()
+                        + ". Champs possibles : " + TRIS_AUTORISES);
+            }
+        }
+
+        if (prix != null && prix.intValue() > 1000) {
+            throw new InvalidRequestException("prix ne peut pas dépasser 1000");
+        }
+
+        // 2. Assemblage des briques : on part d'une condition toujours vraie
+        Specification<Categorie> spec = (root, query, cb) -> cb.conjunction();
+        /*if (categorieId != null) {
+            spec = spec.and(CategorieSpecifications.categorieId(categorieId));
+        }*/
+        if (q != null && !q.isBlank()) {
+            spec = spec.and(CategorieSpecifications.nomContient(q.trim()));
+        }
+        if (prix != null) {
+            spec = spec.and(CategorieSpecifications.prix(prix));
+        }
+
+        Page<Categorie> page = categorieService.getAllPageableSpecCategorie(spec, pageable);
+        return PageResponse.from(page.map(CategorieResponse::from));
     }
 
     @GetMapping
@@ -90,7 +135,7 @@ public class CategorieController {
         }
 
         //long id = sequence.incrementAndGet();
-        categorie = categorieService.upsert(new Categorie(request.name()));
+        categorie = categorieService.upsert(new Categorie(request.name(), request.prix()));
         //categories.put(id, categorie);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()

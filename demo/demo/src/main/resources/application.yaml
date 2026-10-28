@@ -7,7 +7,7 @@ spring:
     password: ${DB_PASSWORD:stock}
   jpa:
     hibernate:
-      ddl-auto: update #validate //only use after tables created. and good for prod
+      ddl-auto: validate
                 #none :	ne touche à rien	production
                 #validate :	compare entités et tables, refuse de démarrer si elles ne correspondent pas	notre choix
                 #update :	modifie les tables pour les faire correspondre	à éviter (modifications imprévisibles)
@@ -16,6 +16,11 @@ spring:
   profiles:
     active: dev
   debug: true
+  data:
+    web:
+      pageable:
+        default-page-size: 2
+        max-page-size: 3
 
 server:
   port: 8081

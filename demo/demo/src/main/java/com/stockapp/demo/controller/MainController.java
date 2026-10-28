@@ -59,7 +59,7 @@ public class MainController {
 ////////              .toUri();
 ////////      return ResponseEntity.created(location).build();
         
-        Categorie categorie = categorieService.upsert(new Categorie(categorierequest.name()));
+        Categorie categorie = categorieService.upsert(new Categorie(categorierequest.name(), categorierequest.prix()));
         return new ResponseEntity<>(categorie, HttpStatus.CREATED);
     }
 

@@ -12,6 +12,9 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.context.annotation.Profile;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
 /**
  *
@@ -54,6 +57,17 @@ public class PRODCategorieServiceImpl implements CategorieService{
         System.out.println("getting categories from PROD");
         return categorieRepository.findAll();
     }
+
+    @Override
+    public Page<Categorie> getAllPageableCategorie(Pageable pageable) {
+        return null;
+    }
+
+    @Override
+    public Page<Categorie> getAllPageableSpecCategorie(Specification specification, Pageable pageable) {
+        return null;
+    }
+
 
     @Override
     public String deleteById(Long id) {

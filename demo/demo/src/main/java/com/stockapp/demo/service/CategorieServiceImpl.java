@@ -12,6 +12,9 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.context.annotation.Profile;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
 /**
  *
@@ -55,6 +58,16 @@ public class CategorieServiceImpl implements CategorieService{
     @Override
     public List<Categorie> getAllCategorie() {
         return categorieRepository.findAll();
+    }
+
+    @Override
+    public Page<Categorie> getAllPageableCategorie(Pageable pageable) {
+        return categorieRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<Categorie> getAllPageableSpecCategorie(Specification specification, Pageable pageable) {
+        return categorieRepository.findAll(specification, pageable);
     }
 
     @Override

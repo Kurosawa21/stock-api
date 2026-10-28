@@ -5,11 +5,11 @@ logging:
   level:
     com.stockapp: WARN
 
-spring:
-  jpa:
-    hibernate:
-      ddl-auto: validate
-    show-sql: true
+#spring:
+#  jpa:
+#    hibernate:
+#      ddl-auto: validate
+#    show-sql: true
 
 springdoc:
   swagger-ui:
