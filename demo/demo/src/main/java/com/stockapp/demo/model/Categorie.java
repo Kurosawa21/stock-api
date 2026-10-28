@@ -25,7 +25,7 @@ public class Categorie {//implements Serializable {
     @Column(nullable = false, length = 50)
     private String name;
 
-    @Column(nullable = false, length = 11)
+    @Column(nullable = false, precision = 10, scale = 2)
     private Long prix;
 
     public Categorie (String name, Long prix){
