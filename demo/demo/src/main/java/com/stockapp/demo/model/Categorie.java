@@ -2,6 +2,7 @@ package com.stockapp.demo.model;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.ArrayList;
 import jakarta.persistence.*;
 import jakarta.persistence.Column;
 
@@ -9,6 +10,8 @@ import jakarta.persistence.Column;
 import lombok.NoArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+
+//import com.stockapp.demo.model.Produit;
 
 //@Data //deprecated
 @NoArgsConstructor
@@ -31,5 +34,14 @@ public class Categorie {//implements Serializable {
     public Categorie (String name, Long prix){
         this.name = name;
         this.prix = prix;
+    }
+
+    // Côté inverse : lecture seule. Pas de cascade : supprimer une catégorie ne doit pas supprimer ses produits.
+    @OneToMany(mappedBy = "categorie")
+    private List<Produit> produits = new ArrayList<>();
+
+    public void addProduit(Produit produit) {
+        produits.add(produit);
+        produit.setCategorie(this);
     }
 }

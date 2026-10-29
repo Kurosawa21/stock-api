@@ -1,7 +1,8 @@
 
 package com.stockapp.demo.service;
 
-import com.stockapp.demo.model.*;
+import com.stockapp.demo.model.Categorie;
+import com.stockapp.demo.dto.CategorieDetailResponse;
 
 import java.util.List;
 import org.springframework.data.domain.Page;
@@ -27,4 +28,8 @@ public interface CategorieService {
     Page<Categorie> getAllPageableCategorie(Pageable pageable);
 
     Page<Categorie> getAllPageableSpecCategorie(Specification<Categorie> specificication, Pageable pageable);
+
+    List<CategorieDetailResponse> listerAvecProduitsNaif();
+
+    List<CategorieDetailResponse> listerAvecProduits();
 }

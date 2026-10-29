@@ -2,6 +2,7 @@ package com.stockapp.demo.controller;
 
 import com.stockapp.demo.dto.CategorieRequest;
 import com.stockapp.demo.dto.CategorieResponse;
+import com.stockapp.demo.dto.CategorieDetailResponse;
 import com.stockapp.demo.dto.PageResponse;
 import com.stockapp.demo.service.CategorieService;
 import com.stockapp.demo.config.AppProperties;
@@ -48,7 +49,7 @@ public class CategorieController {
     //private final Map<Long, Categorie> categories = new ConcurrentHashMap<>();
     private final AtomicLong sequence = new AtomicLong();
 
-    private static final Set<String> TRIS_AUTORISES = Set.of("id", "name");
+    private static final Set<String> TRIS_AUTORISES = Set.of("id", "name", "prix");
 
     private final CategorieService categorieService;
     private final AppProperties properties;
@@ -56,6 +57,13 @@ public class CategorieController {
 
         this.categorieService = categorieService;
         this.properties = properties;
+    }
+
+    @GetMapping("/avec-produits")
+    public List<CategorieDetailResponse> listerAvecProduits(
+            @RequestParam(defaultValue = "false") boolean naif) {
+        return naif ? categorieService.listerAvecProduitsNaif()
+                : categorieService.listerAvecProduits();
     }
 
     @GetMapping("/all")

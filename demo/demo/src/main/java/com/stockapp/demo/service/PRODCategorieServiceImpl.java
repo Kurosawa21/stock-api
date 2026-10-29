@@ -4,6 +4,7 @@
  */
 package com.stockapp.demo.service;
 
+import com.stockapp.demo.dto.CategorieDetailResponse;
 import com.stockapp.demo.model.*;
 import com.stockapp.demo.repository.*;
 import com.stockapp.demo.service.*;
@@ -15,6 +16,9 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+
+import org.springframework.transaction.annotation.Transactional;
+
 
 /**
  *
@@ -63,8 +67,21 @@ public class PRODCategorieServiceImpl implements CategorieService{
         return null;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Page<Categorie> getAllPageableSpecCategorie(Specification specification, Pageable pageable) {
+        return null;
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<CategorieDetailResponse> listerAvecProduits() {
+        return null;
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<CategorieDetailResponse> listerAvecProduitsNaif() {
         return null;
     }
 
