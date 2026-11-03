@@ -1,10 +1,11 @@
 package com.stockapp.demo.controller;
 
-import com.stockapp.demo.dto.CategorieRequest;
-import com.stockapp.demo.dto.CategorieResponse;
-import com.stockapp.demo.dto.CategorieDetailResponse;
-import com.stockapp.demo.dto.PageResponse;
-import com.stockapp.demo.service.CategorieService;
+import com.stockapp.demo.dto.request.CategorieRequest;
+import com.stockapp.demo.dto.response.CategorieDetailResponse;
+import com.stockapp.demo.dto.response.CategorieResponse;
+import com.stockapp.demo.dto.response.MappedCategorieDetailResponse;
+import com.stockapp.demo.dto.response.PageResponse;
+import com.stockapp.demo.service.interfaces.CategorieService;
 import com.stockapp.demo.config.AppProperties;
 import com.stockapp.demo.model.Categorie;
 import com.stockapp.demo.repository.CategorieSpecifications;
@@ -12,6 +13,7 @@ import com.stockapp.demo.exception.ResourceNotFoundException;
 import com.stockapp.demo.exception.DuplicateCategorieException;
 import com.stockapp.demo.exception.InvalidRequestException;
 
+import com.stockapp.demo.util.TriAutorise;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,9 +25,7 @@ import java.math.BigDecimal;
 import java.net.URI;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -40,6 +40,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import org.springframework.data.jpa.domain.Specification;
+import org.springdoc.core.annotations.ParameterObject;
 
 @Tag(name = "Categorie", description = "Gestion des categorie de stock")
 @RestController
@@ -59,6 +60,14 @@ public class CategorieController {
         this.properties = properties;
     }
 
+    @GetMapping("/avec-produits-pagine")
+    public PageResponse<MappedCategorieDetailResponse> listerAvecProduitsPagine(
+            @ParameterObject @PageableDefault(size = 10, sort = "name") Pageable pageable) {
+        TriAutorise.verifier(pageable, TRIS_AUTORISES);
+        //return PageResponse.from(categorieService.listerAvecProduitsPagine(pageable));
+        return PageResponse.from(categorieService.listerAvecProduitsPageable(pageable));
+    }
+
     @GetMapping("/avec-produits")
     public List<CategorieDetailResponse> listerAvecProduits(
             @RequestParam(defaultValue = "false") boolean naif) {
@@ -70,12 +79,7 @@ public class CategorieController {
     public PageResponse<CategorieResponse> lister( @RequestParam(required = false) String q,
                                                    @RequestParam(required = false) BigDecimal prix,
                                                    @PageableDefault(size = 2, sort = "name") Pageable pageable) {
-        for (Sort.Order ordre : pageable.getSort()) {
-            if (!TRIS_AUTORISES.contains(ordre.getProperty())) {
-                throw new InvalidRequestException("Tri non autorisé : " + ordre.getProperty()
-                        + ". Champs possibles : " + TRIS_AUTORISES);
-            }
-        }
+        TriAutorise.verifier(pageable, TRIS_AUTORISES);
 
         if (prix != null && prix.intValue() > 1000) {
             throw new InvalidRequestException("prix ne peut pas dépasser 1000");
@@ -93,8 +97,9 @@ public class CategorieController {
             spec = spec.and(CategorieSpecifications.prix(prix));
         }
 
-        Page<Categorie> page = categorieService.getAllPageableSpecCategorie(spec, pageable);
-        return PageResponse.from(page.map(CategorieResponse::from));
+        Page<CategorieResponse> page = categorieService.getAllPageableSpecCategorie(spec, pageable);
+        //return PageResponse.from(page.map(CategorieResponse::from));
+        return PageResponse.from(page);
     }
 
     @GetMapping

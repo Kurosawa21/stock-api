@@ -1,4 +1,4 @@
-package com.stockapp.demo.dto;
+package com.stockapp.demo.dto.response;
 
 import org.springframework.data.domain.Page;
 

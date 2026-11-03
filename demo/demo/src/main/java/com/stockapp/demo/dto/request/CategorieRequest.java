@@ -1,4 +1,4 @@
-package com.stockapp.demo.dto;
+package com.stockapp.demo.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

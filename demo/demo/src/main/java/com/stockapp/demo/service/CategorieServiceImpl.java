@@ -4,12 +4,19 @@
  */
 package com.stockapp.demo.service;
 
+import com.stockapp.demo.dto.request.CategorieRequest;
+import com.stockapp.demo.dto.response.CategorieDetailResponse;
+import com.stockapp.demo.dto.response.CategorieResponse;
+import com.stockapp.demo.dto.response.MappedCategorieDetailResponse;
+import com.stockapp.demo.dto.response.MappedCategorieResponse;
 import com.stockapp.demo.model.*;
 import com.stockapp.demo.repository.*;
-import com.stockapp.demo.dto.*;
-import com.stockapp.demo.service.*;
+import com.stockapp.demo.mapper.CategorieMapper;
+
 import java.util.List;
 import java.util.Optional;
+
+import com.stockapp.demo.service.interfaces.CategorieService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.context.annotation.Profile;
@@ -25,15 +32,17 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Profile("dev")
-public class CategorieServiceImpl implements CategorieService{
+public class CategorieServiceImpl implements CategorieService {
 
     //@Autowired //not recommanded
     //private CategorieRepository categorieRepository;
 
     //recommanded
     private final CategorieRepository categorieRepository;
-    public CategorieServiceImpl(CategorieRepository categorieRepository) {
+    private final CategorieMapper mapper;
+    public CategorieServiceImpl(CategorieRepository categorieRepository, CategorieMapper mapper) {
         this.categorieRepository = categorieRepository;
+        this.mapper = mapper;
     }
     
     @Override
@@ -41,6 +50,33 @@ public class CategorieServiceImpl implements CategorieService{
     public Categorie upsert(Categorie categorie) {
         categorie = categorieRepository.save(categorie);
         return categorie;
+    }
+
+    // Exemple d'écriture : @Transactional sur la méthode, retour d'un DTO
+    @Override
+    @Transactional
+    public MappedCategorieResponse creer(CategorieRequest request) {
+        // ta vérification de doublon existante reste ici, inchangée
+        return mapper.toResponse(categorieRepository.save(mapper.toEntity(request)));
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Page<MappedCategorieDetailResponse> listerAvecProduitsPageable(Pageable pageable) {
+        return categorieRepository.findAll(pageable).map(mapper::toDetail);   // remplace versDetail()
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Page<Categorie> getAllPageableCategorie(Pageable pageable) {//DEPRECATED: PROHIBITED X
+        return categorieRepository.findAll(pageable);
+    }
+
+
+    @Transactional(readOnly = true)
+    @Override
+    public Page<MappedCategorieResponse> getAllPageableCategorieMapped(Pageable pageable) {//got to return only the DTO, NEVER the entity
+        return categorieRepository.findAll(pageable).map(mapper::toResponse);
     }
 
     @Transactional(readOnly = true)
@@ -67,16 +103,18 @@ public class CategorieServiceImpl implements CategorieService{
         return categorieRepository.findAll();
     }
 
-    @Transactional(readOnly = true)
-    @Override
-    public Page<Categorie> getAllPageableCategorie(Pageable pageable) {
-        return categorieRepository.findAll(pageable);
-    }
 
     @Transactional(readOnly = true)
     @Override
-    public Page<Categorie> getAllPageableSpecCategorie(Specification specification, Pageable pageable) {
-        return categorieRepository.findAll(specification, pageable);
+    public Page<CategorieResponse> getAllPageableSpecCategorie(Specification<Categorie> specification, Pageable pageable) {
+        return categorieRepository.findAll(specification, pageable).map(CategorieResponse::from);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<CategorieDetailResponse> listerAvecProduitsPagine(Pageable pageable) {
+        // 1) page de catégories seules, 2) versDetail() déclenche le chargement par lots des produits
+        return categorieRepository.findAll(pageable).map(CategorieDetailResponse::versDetail);
     }
 
     @Transactional(readOnly = true)
@@ -87,6 +125,7 @@ public class CategorieServiceImpl implements CategorieService{
                 .map(CategorieDetailResponse::versDetail)
                 .toList();
     }
+
 
     @Transactional(readOnly = true)
     @Override

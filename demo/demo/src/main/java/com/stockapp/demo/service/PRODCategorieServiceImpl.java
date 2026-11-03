@@ -4,12 +4,18 @@
  */
 package com.stockapp.demo.service;
 
-import com.stockapp.demo.dto.CategorieDetailResponse;
+import com.stockapp.demo.dto.request.CategorieRequest;
+import com.stockapp.demo.dto.response.CategorieDetailResponse;
+import com.stockapp.demo.dto.response.CategorieResponse;
+import com.stockapp.demo.dto.response.MappedCategorieDetailResponse;
+import com.stockapp.demo.dto.response.MappedCategorieResponse;
 import com.stockapp.demo.model.*;
 import com.stockapp.demo.repository.*;
-import com.stockapp.demo.service.*;
+
 import java.util.List;
 import java.util.Optional;
+
+import com.stockapp.demo.service.interfaces.CategorieService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.context.annotation.Profile;
@@ -26,7 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Profile("prod")
-public class PRODCategorieServiceImpl implements CategorieService{
+public class PRODCategorieServiceImpl implements CategorieService {
 
     //@Autowired //not recommanded
     //private CategorieRepository categorieRepository;
@@ -69,7 +75,7 @@ public class PRODCategorieServiceImpl implements CategorieService{
 
     @Transactional(readOnly = true)
     @Override
-    public Page<Categorie> getAllPageableSpecCategorie(Specification specification, Pageable pageable) {
+    public Page<CategorieResponse> getAllPageableSpecCategorie(Specification specification, Pageable pageable) {
         return null;
     }
 
@@ -83,6 +89,30 @@ public class PRODCategorieServiceImpl implements CategorieService{
     @Override
     public List<CategorieDetailResponse> listerAvecProduitsNaif() {
         return null;
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Page<CategorieDetailResponse> listerAvecProduitsPagine(Pageable pageable){
+        return null;
+    }
+
+    @Override
+    @Transactional
+    public MappedCategorieResponse creer(CategorieRequest request) {
+        // ta vérification de doublon existante reste ici, inchangée
+        return null;
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Page<MappedCategorieDetailResponse> listerAvecProduitsPageable(Pageable pageable) {
+        return null;
+    }
+
+    @Override
+    public Page<MappedCategorieResponse> getAllPageableCategorieMapped(Pageable pageable) {
+        return null; // À implémenter plus tard
     }
 
 

@@ -1,4 +1,4 @@
-package com.stockapp.demo.dto;
+package com.stockapp.demo.dto.response;
 
 import com.stockapp.demo.model.Categorie;
 import com.stockapp.demo.model.Produit;

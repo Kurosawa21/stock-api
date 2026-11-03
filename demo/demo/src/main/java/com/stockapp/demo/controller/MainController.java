@@ -2,9 +2,8 @@ package com.stockapp.demo.controller;
 
 import com.stockapp.demo.model.Categorie;
 import com.stockapp.demo.config.*;
-import com.stockapp.demo.dto.CategorieRequest;
-import com.stockapp.demo.repository.CategorieRepository;
-import com.stockapp.demo.service.CategorieService;
+import com.stockapp.demo.dto.request.CategorieRequest;
+import com.stockapp.demo.service.interfaces.CategorieService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
