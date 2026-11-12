@@ -1,5 +1,6 @@
 package com.stockapp.demo.controller;
 
+import com.stockapp.demo.config.SecurityConfig;
 import com.stockapp.demo.controller.StockController;
 import com.stockapp.demo.exception.InvalidRequestException;
 import com.stockapp.demo.exception.ResourceNotFoundException;
@@ -34,9 +35,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.mockito.ArgumentMatchers.anyInt;
+import org.springframework.context.annotation.Import;
+import org.springframework.security.test.context.support.WithMockUser;
+
 
 
 @WebMvcTest(StockController.class)
+@Import(SecurityConfig.class)
+@WithMockUser(roles = "ADMIN")
 class StockControllerTest {
 
     @Autowired

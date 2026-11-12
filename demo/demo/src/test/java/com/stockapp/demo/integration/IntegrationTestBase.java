@@ -1,4 +1,4 @@
-package com.stockapp.demo;
+package java.com.stockapp.demo.integration;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

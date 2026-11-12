@@ -1,4 +1,4 @@
-package com.stockapp.demo;
+package java.com.stockapp.demo.integration;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

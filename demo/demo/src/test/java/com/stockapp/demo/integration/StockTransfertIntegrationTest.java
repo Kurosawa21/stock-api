@@ -1,4 +1,4 @@
-package com.stockapp.demo;
+package java.com.stockapp.demo.integration;
 
 import com.stockapp.demo.model.Categorie;
 import com.stockapp.demo.model.Entrepot;
@@ -24,7 +24,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class StockTransfertIntegrationTest extends com.stockapp.demo.IntegrationTestBase {
+@WithMockUser(roles = "ADMIN")
+class StockTransfertIntegrationTest extends IntegrationTestBase {
 
     @Autowired private CategorieRepository categorieRepository;
     @Autowired private ProduitRepository produitRepository;
@@ -42,7 +43,7 @@ class StockTransfertIntegrationTest extends com.stockapp.demo.IntegrationTestBas
     @BeforeEach
     void creerDonnees() {
         String id = UUID.randomUUID().toString().substring(0, 8);
-        categorie = categorieRepository.save(new Categorie("IT-" + id));
+        categorie = categorieRepository.save(new Categorie("IT-" + id, 1000L));
 
         Produit p = new Produit();
         p.setSku("IT-" + id);

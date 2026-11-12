@@ -1,5 +1,6 @@
 package com.stockapp.demo.controllers;
 
+import com.stockapp.demo.config.SecurityConfig;
 import com.stockapp.demo.controller.ProduitController;
 import com.stockapp.demo.dto.response.ProduitResponse;
 import com.stockapp.demo.exception.DuplicateSkuException;
@@ -38,7 +39,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.springframework.context.annotation.Import;
+import org.springframework.security.test.context.support.WithMockUser;
+
 @WebMvcTest(ProduitController.class)
+@Import(SecurityConfig.class)
+@WithMockUser(roles = "ADMIN")
 class ProduitControllerTest {
 
     @Autowired
