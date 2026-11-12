@@ -29,7 +29,7 @@ public interface CategorieService {
 
     public List<Categorie> getAllCategorie();
 
-    public String deleteById(Long id);
+    public void deleteById(Long id);
 
     public Page<Categorie> getAllPageableCategorie(Pageable pageable);
 

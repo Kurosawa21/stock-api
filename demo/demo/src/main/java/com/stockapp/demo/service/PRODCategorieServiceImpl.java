@@ -117,12 +117,11 @@ public class PRODCategorieServiceImpl implements CategorieService {
 
 
     @Override
-    public String deleteById(Long id) {
+    public void deleteById(Long id) {
         if(categorieRepository.existsById(id)){
             categorieRepository.deleteById(id);
-            return "deleted!";
+
         }
-        return "not deleted...";
     }
     
 }

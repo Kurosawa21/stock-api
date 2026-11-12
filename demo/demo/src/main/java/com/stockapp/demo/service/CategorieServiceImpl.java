@@ -9,6 +9,8 @@ import com.stockapp.demo.dto.response.CategorieDetailResponse;
 import com.stockapp.demo.dto.response.CategorieResponse;
 import com.stockapp.demo.dto.response.MappedCategorieDetailResponse;
 import com.stockapp.demo.dto.response.MappedCategorieResponse;
+import com.stockapp.demo.exception.DuplicateCategorieException;
+import com.stockapp.demo.exception.ResourceNotFoundException;
 import com.stockapp.demo.model.*;
 import com.stockapp.demo.repository.*;
 import com.stockapp.demo.mapper.CategorieMapper;
@@ -53,10 +55,18 @@ public class CategorieServiceImpl implements CategorieService {
     }
 
     // Exemple d'écriture : @Transactional sur la méthode, retour d'un DTO
-    @Override
+   /* @Override
     @Transactional
     public MappedCategorieResponse creer(CategorieRequest request) {
         // ta vérification de doublon existante reste ici, inchangée
+        return mapper.toResponse(categorieRepository.save(mapper.toEntity(request)));
+    }*/
+    @Override
+    @Transactional
+    public MappedCategorieResponse creer(CategorieRequest request) {
+        if (categorieRepository.findByName(request.name()).isPresent()) {
+            throw new DuplicateCategorieException(request.name());   // adapte au constructeur réel
+        }
         return mapper.toResponse(categorieRepository.save(mapper.toEntity(request)));
     }
 
@@ -79,13 +89,20 @@ public class CategorieServiceImpl implements CategorieService {
         return categorieRepository.findAll(pageable).map(mapper::toResponse);
     }
 
-    @Transactional(readOnly = true)
+    /*@Transactional(readOnly = true)
     @Override
     public Categorie getById(Long id) {
         Optional<Categorie> findById = categorieRepository.findById(id);
         if(findById.isPresent())
             return findById.get();
         return null;
+    }*/
+
+    @Transactional(readOnly = true)
+    @Override
+    public Categorie getById(Long id) {
+        return categorieRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Catégorie", id));
     }
 
     @Transactional(readOnly = true)
@@ -136,13 +153,22 @@ public class CategorieServiceImpl implements CategorieService {
                 .toList();
     }
 
-    @Override
+    /*@Override
     public String deleteById(Long id) {
         if(categorieRepository.existsById(id)){
             categorieRepository.deleteById(id);
             return "deleted!";
         }
         return "not deleted...";
+    }*/
+
+    @Override
+    @Transactional
+    public void deleteById(Long id) {
+        if (!categorieRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Catégorie", id);
+        }
+        categorieRepository.deleteById(id);
     }
     
 }

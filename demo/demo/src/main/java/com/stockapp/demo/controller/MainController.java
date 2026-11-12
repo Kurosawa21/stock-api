@@ -84,7 +84,7 @@ public class MainController {
     public ResponseEntity<String> deleteById(@PathVariable Long id) {
         // This returns a JSON or XML with the users
         System.out.println("deleting categorie "+id);
-        String status = categorieService.deleteById(id);
-        return new ResponseEntity<>(status, HttpStatus.OK);
+        categorieService.deleteById(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

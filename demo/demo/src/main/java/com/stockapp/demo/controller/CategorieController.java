@@ -1,10 +1,7 @@
 package com.stockapp.demo.controller;
 
 import com.stockapp.demo.dto.request.CategorieRequest;
-import com.stockapp.demo.dto.response.CategorieDetailResponse;
-import com.stockapp.demo.dto.response.CategorieResponse;
-import com.stockapp.demo.dto.response.MappedCategorieDetailResponse;
-import com.stockapp.demo.dto.response.PageResponse;
+import com.stockapp.demo.dto.response.*;
 import com.stockapp.demo.service.interfaces.CategorieService;
 import com.stockapp.demo.config.AppProperties;
 import com.stockapp.demo.model.Categorie;
@@ -86,7 +83,7 @@ public class CategorieController {
         }
 
         // 2. Assemblage des briques : on part d'une condition toujours vraie
-        Specification<Categorie> spec = (root, query, cb) -> cb.conjunction();
+        Specification<Categorie> spec = (root, query, cb) -> cb.conjunction();//PROHIBIED : to do in the service
         /*if (categorieId != null) {
             spec = spec.and(CategorieSpecifications.categorieId(categorieId));
         }*/
@@ -121,7 +118,10 @@ public class CategorieController {
     public ResponseEntity<CategorieResponse>  lire(@PathVariable Long id) {
 
         System.out.println("getting categorie "+id);
+        //PROHIBIED : to do in the service. NEVER use the entity in the controler.
+        //ALWAYS use DTOs
         Categorie categorie = categorieService.getById(id);
+
         if (categorie == null) {
             //return ResponseEntity.notFound().build();
             throw new ResourceNotFoundException("Categorie", id);
@@ -137,23 +137,24 @@ public class CategorieController {
             @ApiResponse(responseCode = "409", description = "Catégorie déjà enregistrée")
     })
     @PostMapping("/add")
-    public ResponseEntity<CategorieResponse> creer(@Valid @RequestBody CategorieRequest request) {
+    public ResponseEntity<MappedCategorieResponse> creer(@Valid @RequestBody CategorieRequest request) {
         System.out.println("begining categorie adding.. : "+request);
 
         //boolean skuExiste = produits.values().stream()
         //        .anyMatch(p -> p.sku().equals(request.sku()));
-        Categorie categorie = categorieService.getByName(request.name());
-        if (categorie != null && categorie.getId() != 0) {
-            throw new DuplicateCategorieException(request.name());
-        }
+//        Categorie categorie = categorieService.getByName(request.name());
+//        if (categorie != null && categorie.getId() != 0) {
+//            throw new DuplicateCategorieException(request.name());
+//        }
 
         //long id = sequence.incrementAndGet();
-        categorie = categorieService.upsert(new Categorie(request.name(), request.prix()));
+        //categorie = categorieService.upsert(new Categorie(request.name(), request.prix()));
+        MappedCategorieResponse categorieDetailResponse = categorieService.creer(request);
         //categories.put(id, categorie);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}").buildAndExpand(categorie.getId()).toUri();
-        return ResponseEntity.created(location).body(CategorieResponse.from(categorie));
+                .path("/{id}").buildAndExpand(categorieDetailResponse.id()).toUri();
+        return ResponseEntity.created(location).body(categorieDetailResponse);
         //return new ResponseEntity<>(categorie, HttpStatus.CREATED);
 
     }
@@ -175,9 +176,9 @@ public class CategorieController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> supprimer(@PathVariable Long id) {
         // This returns a JSON or XML with the users
-        System.out.println("deleting categorie "+id);
-        String status = categorieService.deleteById(id);
-        return new ResponseEntity<>(status, HttpStatus.OK);
+        categorieService.deleteById(id);
+        System.out.println("deleted categorie "+id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     /*private Categorie trouver(Long id) {
